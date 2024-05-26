@@ -60,7 +60,7 @@ namespace SampleApplication
             result.View = View.Details;
             result.DrawItemBorderLines = true;
             result.DrawColumnHeaderBySystem = false;
-            result.HeaderStyle = ColumnHeaderStyle.Clickable;
+            result.HeaderStyle = ColumnHeaderStyle.Nonclickable;
             result.FullRowSelect = true;
             result.ColumnHeaderContextMenuStrip = new ContextMenuStrip()
             {
@@ -79,10 +79,11 @@ namespace SampleApplication
                 }
             };
             result.ColumnHeaderFont = new Font("メイリオ", 15);
-            result.SetSubItemAlignment(0, StringAlignment.Far);
-            result.SetSubItemAlignment(1, StringAlignment.Center);
-            result.SetSubItemAlignment(2, StringAlignment.Near);
+            result.SetSubItemHorizontalTextAlignment(0, StringAlignment.Center);
+            result.SetSubItemHorizontalTextAlignment(1, StringAlignment.Center);
+            result.SetSubItemHorizontalTextAlignment(2, StringAlignment.Center);
 
+            result.Columns.Add("Text");
             result.Columns.Add("SubItem1");
             result.Columns.Add("SubItem2");
             result.Items.Add("Text");
@@ -90,6 +91,7 @@ namespace SampleApplication
             result.Items.Add(new ListViewItem { SubItems = { "SubItem1", "SubItem2" }, Text = "Text" });
             result.Items.Add(new ListViewItem { SubItems = { "SubItem1", "SubItem2" }, Text = "Text" });
 
+            result.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
             return result;
         }
 

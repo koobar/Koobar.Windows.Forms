@@ -21,10 +21,7 @@ namespace Koobar.Windows.Forms
 
             SetStyle(ControlStyles.UserPaint, true);
             SetStyle(ControlStyles.AllPaintingInWmPaint, true);
-            SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
 
-            this.ColumnHeaderFont = this.Font;
-            this.ItemFont = this.Font;
             this.OwnerDraw = true;
         }
 
@@ -33,12 +30,12 @@ namespace Koobar.Windows.Forms
         /// <summary>
         /// ヘッダのフォント
         /// </summary>
-        public Font ColumnHeaderFont { set; get; }
+        public Font ColumnHeaderFont { set; get; } = SystemFonts.DefaultFont;
 
         /// <summary>
         /// アイテムのフォント
         /// </summary>
-        public Font ItemFont { set; get; }
+        public Font ItemFont { set; get; } = SystemFonts.DefaultFont;
 
         /// <summary>
         /// ヘッダのコンテキストメニュー
@@ -69,7 +66,23 @@ namespace Koobar.Windows.Forms
         /// 列ヘッダのテキストの垂直方向の配置
         /// </summary>
         public StringAlignment ColumnHeaderTextVerticalAlignment { set; get; } = StringAlignment.Center;
-        
+
+        /// <summary>
+        /// フォント
+        /// </summary>
+        [Obsolete("ColumnHeaderFontプロパティ、およびItemFontプロパティを使用することを検討してください。")]
+        public new Font Font
+        {
+            set
+            {
+                base.Font = value;
+            }
+            get
+            {
+                return base.Font;
+            }
+        }
+
         /// <summary>
         /// コントロールをユーザー自身が描画するかどうか
         /// </summary>
@@ -163,7 +176,7 @@ namespace Koobar.Windows.Forms
         /// </summary>
         /// <param name="columnIndex"></param>
         /// <param name="alignment"></param>
-        public void SetSubItemAlignment(int columnIndex, StringAlignment alignment)
+        public void SetSubItemHorizontalTextAlignment(int columnIndex, StringAlignment alignment)
         {
             if (this.subItemHorizontalTextAlignments.ContainsKey(columnIndex))
             {
@@ -182,7 +195,7 @@ namespace Koobar.Windows.Forms
         /// </summary>
         /// <param name="columnIndex"></param>
         /// <param name="alignment"></param>
-        public void SetSubItemLineAlignment(int columnIndex, StringAlignment alignment)
+        public void SetSubItemVerticalTextAlignment(int columnIndex, StringAlignment alignment)
         {
             if (this.subItemVerticalTextAlignments.ContainsKey(columnIndex))
             {
@@ -223,7 +236,7 @@ namespace Koobar.Windows.Forms
                 return this.subItemVerticalTextAlignments[subItemIndex];
             }
 
-            return StringAlignment.Near;
+            return StringAlignment.Center;
         }
 
         /// <summary>
@@ -298,13 +311,21 @@ namespace Koobar.Windows.Forms
                         // ヘッダを塗りつぶし、境界線を描画
                         e.Graphics.FillRectangle(fillBrush, e.Bounds);
                         e.Graphics.DrawLine(pen, e.Bounds.Right - 1, e.Bounds.Y, e.Bounds.Right - 1, e.Bounds.Bottom);
-                        e.Graphics.DrawLine(pen, e.Bounds.X, e.Bounds.Bottom - 1, e.Bounds.Right - 1, e.Bounds.Bottom - 1);
+                    }
+
+                    // 区切り線を描画する。
+                    if (this.DrawItemBorderLines)
+                    {
+                        using (var pen = new Pen(Color.FromArgb(229, 229, 229)))
+                        {
+                            e.Graphics.DrawLine(pen, e.Bounds.X, e.Bounds.Bottom - 1, e.Bounds.Right - 1, e.Bounds.Bottom - 1);
+                        }
                     }
 
                     // ヘッダのテキストを描画
                     using (var sf = new StringFormat() { Alignment = this.ColumnHeaderTextHorizontalAlignment, LineAlignment = this.ColumnHeaderTextVerticalAlignment })
                     {
-                        e.Graphics.DrawString(this.Columns[e.ColumnIndex].Text, this.ColumnHeaderFont, Brushes.Black, e.Bounds, sf);
+                        e.Graphics.DrawString(this.Columns[e.ColumnIndex].Text, this.ColumnHeaderFont, SystemBrushes.ControlText, e.Bounds, sf);
                     }
                 }
             }
@@ -318,26 +339,26 @@ namespace Koobar.Windows.Forms
         /// <param name="e"></param>
         protected override void OnDrawItem(DrawListViewItemEventArgs e)
         {
-            var captionColor = SystemBrushes.ControlText;
-
-            if (e.Item.Selected || (this.HotTracking && ItemContainsMouseCursor(e.ItemIndex)))
-            {
-                e.Graphics.FillRectangle(SystemBrushes.Highlight, e.Bounds);
-                captionColor = SystemBrushes.HighlightText;
-            }
-            else
-            {
-                e.Graphics.FillRectangle(Brushes.White, e.Bounds);
-            }
-
             // 詳細表示以外の表示の場合、アイテムのテキストを描画
             if (this.View != View.Details)
             {
+                var captionColor = SystemBrushes.ControlText;
+
+                if (e.State.HasFlag(ListViewItemStates.Selected))
+                {
+                    e.Graphics.FillRectangle(SystemBrushes.Highlight, e.Bounds);
+                    captionColor = SystemBrushes.HighlightText;
+                }
+                else
+                {
+                    e.Graphics.FillRectangle(Brushes.White, e.Bounds);
+                }
+
                 using (var format = new StringFormat())
                 {
                     // 描画位置を設定
-                    format.Alignment = StringAlignment.Center;
-                    format.LineAlignment = StringAlignment.Center;
+                    format.Alignment = GetSubItemHorizontalTextAlignment(0);
+                    format.LineAlignment = GetSubItemVerticalTextAlignment(0);
 
                     // テキストを描画
                     e.Graphics.DrawString(e.Item.Text, this.ItemFont, captionColor, e.Bounds, format);
@@ -364,35 +385,30 @@ namespace Koobar.Windows.Forms
         protected override void OnDrawSubItem(DrawListViewSubItemEventArgs e)
         {
             string caption = e.SubItem.Text;
+            var captionColor = SystemBrushes.ControlText;
 
-            using (var pen = new Pen(Color.FromArgb(229, 229, 229)))
+            if (e.ItemState.HasFlag(ListViewItemStates.Selected))
             {
-                var captionColor = SystemBrushes.ControlText;
+                e.Graphics.FillRectangle(SystemBrushes.Highlight, e.Bounds);
+                captionColor = SystemBrushes.HighlightText;
+            }
 
-                // 選択されているアイテムか？
-                if (e.Item.Selected || (this.HotTracking && ItemContainsMouseCursor(e.ItemIndex)))
-                {
-                    captionColor = SystemBrushes.HighlightText;
-                }
+            // テキストの描画
+            using (var format = new StringFormat() { Alignment = GetSubItemHorizontalTextAlignment(e.ColumnIndex), LineAlignment = GetSubItemVerticalTextAlignment(e.ColumnIndex) })
+            {
+                e.Graphics.DrawString(caption, this.ItemFont, captionColor, e.Bounds, format);
+            }
 
-                using (var format = new StringFormat() { Alignment = GetSubItemHorizontalTextAlignment(e.ColumnIndex), LineAlignment = GetSubItemVerticalTextAlignment(e.ColumnIndex) })
+            if (this.DrawItemBorderLines)
+            {
+                // サブアイテムの境界線を描画
+                using (var pen = new Pen(Color.FromArgb(229, 229, 229)))
                 {
-                    e.Graphics.DrawString(caption, this.ItemFont, captionColor, e.Bounds, format);
-                }
-
-                if (this.DrawItemBorderLines)
-                {
-                    // サブアイテムの境界線を描画
                     e.Graphics.DrawLine(pen, e.Bounds.Right - 1, e.Bounds.Y, e.Bounds.Right - 1, e.Bounds.Bottom);
                 }
             }
 
             base.OnDrawSubItem(e);
-        }
-
-        protected override void OnSelectedIndexChanged(EventArgs e)
-        {
-            base.OnSelectedIndexChanged(e);
         }
 
         /// <summary>
