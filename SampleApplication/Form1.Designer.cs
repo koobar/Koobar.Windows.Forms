@@ -32,6 +32,7 @@
             this.ファイルFToolStripMenuItem = new Koobar.Windows.Forms.NativeToolStripMenuItem();
             this.新規作成NToolStripMenuItem = new Koobar.Windows.Forms.NativeToolStripMenuItem();
             this.closableTabControl1 = new Koobar.Windows.Forms.ClosableTabControl();
+            this.サブメニューToolStripMenuItem = new Koobar.Windows.Forms.NativeToolStripMenuItem();
             this.nativeMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -55,6 +56,10 @@
             // 
             // 新規作成NToolStripMenuItem
             // 
+            this.新規作成NToolStripMenuItem.Checked = true;
+            this.新規作成NToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.新規作成NToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.サブメニューToolStripMenuItem});
             this.新規作成NToolStripMenuItem.Name = "新規作成NToolStripMenuItem";
             this.新規作成NToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
             this.新規作成NToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
@@ -69,6 +74,12 @@
             this.closableTabControl1.SelectedTab = null;
             this.closableTabControl1.Size = new System.Drawing.Size(800, 426);
             this.closableTabControl1.TabIndex = 1;
+            // 
+            // サブメニューToolStripMenuItem
+            // 
+            this.サブメニューToolStripMenuItem.Name = "サブメニューToolStripMenuItem";
+            this.サブメニューToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.サブメニューToolStripMenuItem.Text = "サブメニュー";
             // 
             // Form1
             // 
@@ -93,6 +104,7 @@
         private Koobar.Windows.Forms.NativeToolStripMenuItem ファイルFToolStripMenuItem;
         private Koobar.Windows.Forms.NativeToolStripMenuItem 新規作成NToolStripMenuItem;
         private Koobar.Windows.Forms.ClosableTabControl closableTabControl1;
+        private Koobar.Windows.Forms.NativeToolStripMenuItem サブメニューToolStripMenuItem;
     }
 }
 

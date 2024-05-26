@@ -122,7 +122,7 @@ namespace Koobar.Windows.Forms
                             var header = (ColumnHeader)obj;
                             var size = g.MeasureString(header.Text, this.ColumnHeaderFont);
 
-                            header.Width = (int)size.Width;
+                            header.Width = (int)Math.Round(size.Width, MidpointRounding.AwayFromZero);
                         }
                     }
                 }

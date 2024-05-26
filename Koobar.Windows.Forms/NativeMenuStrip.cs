@@ -11,7 +11,7 @@ namespace Koobar.Windows.Forms
     public class NativeMenuStrip : MenuStrip
     {
         // 非公開定数
-        private const int HEIGHT = 20;
+        private const int HEIGHT = 21;
 
         #region プロパティ
 
@@ -113,7 +113,6 @@ namespace Koobar.Windows.Forms
             base.Height = HEIGHT;
             base.BackColor = Color.White;
             base.RenderMode = ToolStripRenderMode.System;
-            base.Size = new Size(this.Parent.Width, HEIGHT);
         }
     }
 }
