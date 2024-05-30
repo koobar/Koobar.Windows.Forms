@@ -50,63 +50,10 @@ namespace SampleApplication
             return viewer;
         }
 
-        /// <summary>
-        /// デモ表示用のListViewExを作成する。
-        /// </summary>
-        /// <returns></returns>
-        private ListViewEx CreateDemonstrationListViewEx()
-        {
-            var result = new ListViewEx();
-            result.View = View.Details;
-            result.DrawItemBorderLines = true;
-            result.DrawColumnHeaderBySystem = false;
-            result.HeaderStyle = ColumnHeaderStyle.Nonclickable;
-            result.FullRowSelect = true;
-            result.ColumnHeaderContextMenuStrip = new ContextMenuStrip()
-            {
-                Items =
-                {
-                    "Header Menu1",
-                    "Header Menu2"
-                }
-            };
-            result.ItemContextMenuStrip = new ContextMenuStrip()
-            {
-                Items =
-                {
-                    "Items Menu1",
-                    "Items Menu2"
-                }
-            };
-            result.ColumnHeaderFont = new Font("メイリオ", 15);
-            result.SetSubItemHorizontalTextAlignment(0, StringAlignment.Center);
-            result.SetSubItemHorizontalTextAlignment(1, StringAlignment.Center);
-            result.SetSubItemHorizontalTextAlignment(2, StringAlignment.Center);
-
-            result.Columns.Add("Text");
-            result.Columns.Add("SubItem1");
-            result.Columns.Add("SubItem2");
-            result.Items.Add("Text");
-            result.Items.Add(new ListViewItem { SubItems = { "SubItem1", "SubItem2" }, Text = "Text" });
-            result.Items.Add(new ListViewItem { SubItems = { "SubItem1", "SubItem2" }, Text = "Text" });
-            result.Items.Add(new ListViewItem { SubItems = { "SubItem1", "SubItem2" }, Text = "Text" });
-
-            result.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
-            return result;
-        }
-
         private Koobar.Windows.Forms.TabPage CreateWaveformViewerTabPage()
         {
             var page = new Koobar.Windows.Forms.TabPage("WaveformViewer");
             page.Control = CreateDemonstrationWaveformViewer();
-
-            return page;
-        }
-
-        private Koobar.Windows.Forms.TabPage CreateDoubleBufferedListViewTabPage()
-        {
-            var page = new Koobar.Windows.Forms.TabPage("ListViewEx");
-            page.Control = CreateDemonstrationListViewEx();
 
             return page;
         }
@@ -116,7 +63,6 @@ namespace SampleApplication
             base.OnLoad(e);
 
             this.closableTabControl1.AddTabPage(CreateWaveformViewerTabPage());
-            this.closableTabControl1.AddTabPage(CreateDoubleBufferedListViewTabPage());
         }
     }
 }

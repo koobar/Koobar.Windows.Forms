@@ -61,9 +61,6 @@
     <Compile Include="DoubleBufferedListView.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ListViewEx.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="NativeMenuStrip.cs">
       <SubType>Component</SubType>
     </Compile>
